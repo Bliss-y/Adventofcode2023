@@ -11,7 +11,7 @@ import (
 var INPUT_DIR = "input"
 
 func main() {
-    day3();
+    day4();
 }
 
 func day2(){
@@ -127,6 +127,41 @@ func day3() {
             fmt.Println(i,currentGears[i]);
             total += nums[0] * nums[1];
         }
+    }
+    fmt.Println(total);
+}
+
+func day4() {
+    input, _ := os.ReadFile("inputs/4.txt");
+    cards := strings.Split(string(input), "\r\n");
+    total := 0;
+    matchingns := make([]int, 0, len(cards));
+    for _,e := range cards {
+        if(len(e) <=0){break;}
+        numbers := strings.Split(strings.Split(e, ": ")[1], " | ")
+        winnings := strings.Split(numbers[0], " ");
+        matchers := strings.Split(numbers[1], " ")
+        matchingn := 0;
+        for _,n:= range winnings {
+            for _,m := range matchers {
+                if n!="" && n == m {
+                    matchingn ++;
+                }
+            }
+        }
+        matchingns = append(matchingns, matchingn);
+    }
+    amounts := make([]int, len(matchingns), len(matchingns));
+    for i,e := range matchingns {
+        amounts[i] += 1;
+        fmt.Println(i, amounts[i]);
+        for j := 0; j < e; j++ {
+            index := i+j+1
+            if index < len(amounts) {
+                amounts[index]+=amounts[i];
+            }
+        }
+        total += amounts[i];
     }
     fmt.Println(total);
 }
