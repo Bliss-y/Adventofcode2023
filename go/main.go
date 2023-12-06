@@ -11,7 +11,7 @@ import (
 var INPUT_DIR = "input"
 
 func main() {
-    day4();
+    day5();
 }
 
 func day2(){
@@ -164,4 +164,57 @@ func day4() {
         total += amounts[i];
     }
     fmt.Println(total);
+}
+
+type Seed struct {
+    val int;
+    next *Seed;
+}
+
+func getNumOrThrow(x string) int{
+    i, err := strconv.Atoi(x);
+    if err != nil {
+        panic(err)
+    }
+    return i;
+}
+
+func day5() {
+    input,_ := os.ReadFile("tests/5.txt");
+    lines := strings.Split(string(input), "\r\n");
+    seeds := make(map[string][]int);
+    mapStart := 0;
+    things := []string{"seed","soil", "fertilizer", "water", "light", "temperature", "humidity", "location"}
+    for i,e := range lines {
+        if i == 1 {
+            // just seeds 
+            s := strings.Split(strings.Split(e, "seeds: ")[1], " ");
+            seeds["seed"] = make([]int, len(s), len(s));
+            for _, n := range s {
+                val,_ := strconv.Atoi(n);
+                seeds["seed"] = append(seeds["seed"], val)
+            }
+            continue;
+        }
+        if e == ""{
+            // end of a mapping 
+            mapStart++;
+            continue;
+        }
+        vals := strings.Split(e, " ");
+        if len(vals) != 3 {
+            seeds[things[mapStart]] = make([]int, len(seeds["seed"]));
+            continue;
+        }
+        valn := make([]int, 3);
+        for in,n := range vals {
+            valn[in] = getNumOrThrow(n);
+        }
+        for i, x := range seeds[things[mapStart -1]]{
+            if valn[0] < x && valn[3] > x {
+                seeds[things[mapStart]][i] = valn[1] + x - valn[0]
+            }
+        }
+    }
+    fmt.Println(seeds);
 }
